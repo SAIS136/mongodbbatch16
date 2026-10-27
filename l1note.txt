@@ -153,14 +153,17 @@ https://www.mongodb.com/
 
     => Method 1
     => Open Local Terminal
-    mongosh --version       ()
+    mongosh --version       (2.13.0)
     mongosh "mongodb+srv://crm.gwe5gyr.mongodb.net/" --apiVersion 1 --username user2
     123456789aaa
 
     => Method 2
-    mongodb+srv://user2:123456789aaa@crm.gwe5gyr.mongodb.net/
+    mongosh mongodb+srv://user2:123456789aaa@crm.gwe5gyr.mongodb.net/
 
     show databases or show dbs
+
+----------------------------------------------------
+
 
 
 

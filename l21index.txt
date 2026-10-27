@@ -1,0 +1,126 @@
+=> Index
+
+db.articles.insertMany([
+    {
+    _id:1,
+    title:"MongoDB Text Seaech Basics",
+    content:"Lorem Ipsum is simply dummy text of the printing and typesetting industry MongoDB.",
+    tags:["mongodb","search"]
+    },
+    {
+    _id:2,
+    title:"Advanced Indexing",
+    content:"Lorem Ipsum has been the industry's standard dummy text ever since 1966,",
+    tags:["index"]
+    },
+    {
+    _id:3,
+    title:"Node.js and MongoDB",
+    content:"when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London,",
+    tags:["node","mongodb"]
+    },
+    {
+    _id:4,
+    title:"Python pymongo Guide",
+    content:"took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. ",
+    tags:["python","mongodb"]
+    },
+    {
+    _id:5,
+    title:"Javascript and mongodb Guide",
+    content:"It has survived MongoDB not only many decades,",
+    tags:["mongodb","javascript"]
+    }
+])
+
+db.articles.getIndexes()
+
+=> Create a text index (single field)
+
+db.articles.createIndex({content:"text"})
+
+=> List index
+
+db.articles.getIndexes()
+
+
+=> Search using text index
+
+db.articles.find({$text:{$search:"MongoDB"}})
+db.articles.find({$text:{$search:"mongodb"}})
+db.articles.find({$text:{$search:"MongoDB Ipsum"}})
+db.articles.find({$text:{$search:"mongodb ipsum"}})
+
+
+
+----------------------------------------------
+
+
+
+db.posts.insertMany([
+    {
+    _id:1,
+    title:"MongoDB Text Seaech Basics",
+    content:"Lorem Ipsum is simply dummy text of the printing and typesetting industry MongoDB.",
+    tags:["mongodb","search"]
+    },
+    {
+    _id:2,
+    title:"Advanced Indexing",
+    content:"Lorem Ipsum has been the industry's standard dummy text ever since 1966,",
+    tags:["index"]
+    },
+    {
+    _id:3,
+    title:"Node.js and MongoDB",
+    content:"when designers at Letraset and James Mosley, the librarian at St Bride Printing Library in London,",
+    tags:["node","mongodb"]
+    },
+    {
+    _id:4,
+    title:"Python pymongo Guide",
+    content:"took a 1914 Cicero translation and scrambled it to make dummy text for Letraset's Body Type sheets. ",
+    tags:["python","mongodb"]
+    },
+    {
+    _id:5,
+    title:"Javascript and mongodb Guide",
+    content:"It has survived MongoDB not only many decades,",
+    tags:["mongodb","javascript"]
+    }
+])
+
+db.posts.getIndexes()
+
+=> Create a text index (multi field)
+
+db.posts.createIndex({title:"text",content:"text"})
+
+db.posts.getIndexes()
+
+db.posts.find({$text:{$search:"MongoDB"}})
+db.posts.find({$text:{$search:"mongodb"}})
+db.posts.find({$text:{$search:"MongoDB Ipsum"}})
+db.posts.find({$text:{$search:"mongodb ipsum"}})
+
+
+-------------------------------------------
+
+=> Drop text index
+
+    db.articles.getIndexes()
+
+    db.articles.dropIndex("content_text")
+
+    db.articles.getIndexes()
+
+
+=> Drop all text indexes
+
+    db.posts.getIndexes()
+
+    db.posts.dropIndexes()
+
+    db.posts.getIndexes()
+
+-------------------------------------------

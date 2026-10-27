@@ -1,0 +1,97 @@
+db.wholesales.insertMany([
+    {
+        _id:1,
+        name:"Laptop",
+        details:{brand:"Dell",specs:{ram:16,storage:512}},
+        prices:[1200,1250,1199,1300],
+        category:"Electronics",
+        inventory:{warehouse:"A",stock:50}
+    },
+    {
+        _id:2,
+        name:"Mouse",
+        details:{brand:"Logitech",wireless:true},
+        prices:[20,30,50],
+        category:"Accessories",
+        inventory:{warehouse:"B",stock:200}
+    },
+    {
+        _id:3,
+        name:"Keyboard",
+        details:{brand:"A4Tech",mechanical:true},
+        prices:[80,90,100,150],
+        category:"Accessories"
+    }
+])
+
+
+=> Count Documents
+db.users.find()
+db.users.countDocuments({
+    age:{
+        $gt:23
+    }
+})
+
+
+db.wholesales.countDocuments({
+    prices:{
+        $gt:25
+    }
+})
+
+db.wholesales.countDocuments({
+    prices:{
+        $gt:50
+    }
+})
+
+-----------------------------------------------------
+
+=> $replaceRoot
+
+exe 1 (basic Document)
+db.wholesales.aggregate([
+    {
+        $replaceRoot:{
+            newRoot:"$details"
+        }
+    }
+])
+
+
+exe 2 (computed Document)
+db.wholesales.aggregate([
+    {
+        $replaceRoot:{
+            newRoot:{
+                productName:"$name",
+                manufacturer:"$details.brand",
+                type:"$category",
+                currentStock:"$inventory.stock"
+            }
+        }
+    }
+])
+
+
+exe 3 (error handling with $ifNull)
+db.wholesales.aggregate([
+    {
+        $replaceRoot:{
+            newRoot:"$nonExistenFields" // error
+        }
+    }
+])
+
+db.wholesales.aggregate([
+    {
+        $replaceRoot:{
+            newRoot:{
+                $ifNull:["$inventory",{error:"No inventory data"}]
+            }
+        }
+    }
+])
+
+----------------------------------------------------------

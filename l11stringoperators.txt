@@ -1,0 +1,239 @@
+db.friends.insertMany([
+    {firstname:"Aung",lastname:"Kyaw",familyname:"AungGyi",email:"aungkyaw@gmail.com",nickname:"    aung    "},
+    {firstname:"Su",lastname:"Mon",familyname:"SuSu",email:"sumon@gmail.com",nickname:" su "},
+    {firstname:"Hnin",lastname:"Mya",familyname:"HninHnin",email:"hninmya@gmail.com",nickname:"hnin"},
+])
+
+db.friends.insertMany([
+    {firstname:"Tun",lastname:"Tun",familyname:"ATun",email:"tuntun@gmail.com",nickname:"   tun    ",city:"Yangon"},
+])
+
+
+=> $concat
+
+db.friends.aggregate([
+    {
+        $project:{
+            fullName:{
+                $concat:["$firstname"," ","$lastname"]
+            }
+        }
+    }
+])
+
+
+
+=> $substrBytes / $substrCP
+
+db.friends.aggregate([
+    {
+        $project:{
+            first3:{
+                $substrBytes:["$familyname",0,3]
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            first3:{
+                $substrCP:["$familyname",0,3]
+            }
+        }
+    }
+])
+
+
+=> $toUpper / $toLower
+
+db.friends.aggregate([
+    {
+        $project:{
+            nameUpper:{
+                $toUpper:["$familyname"]
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            nameLower:{
+                $toLower:["$familyname"]
+            }
+        }
+    }
+])
+
+
+
+=> $strLenBytes / $strLenCP
+
+db.friends.aggregate([
+    {
+        $project:{
+            familyname:1,
+            len:{
+                $strLenBytes:"$familyname"
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            familyname:1,
+            len:{
+                $strLenCP:"$familyname"
+            }
+        }
+    }
+])
+
+
+## MongoServerError[Location34471]: Executor error during aggregate command on namespace: lessonone.friends :: caused by :: $strLenCP requires a string argument, found: missing
+
+db.friends.aggregate([
+    {
+        $project:{
+            familyname:1,
+            len:{
+                $strLenCP:"$city"
+            }
+        }
+    }
+])
+
+
+
+## Slove with ($ifNull)
+
+db.friends.aggregate([
+    {
+        $project:{
+            familyname:1,
+            city:1,
+            len:{
+                $strLenCP:{
+                    $ifNull:["$city",""]
+                }
+            }
+        }
+    }
+])
+
+
+
+
+=> $indexOfBytes / $indexOfCP
+
+db.friends.aggregate([
+    {
+        $project:{
+            email:1,
+            pos:{
+                $indexOfBytes:["$email","a"]
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            email:1,
+            pos:{
+                $indexOfCP:["$email","a"]
+            }
+        }
+    }
+])
+
+
+
+=> $split
+
+db.friends.aggregate([
+    {
+        $project:{
+            email:1,
+            parts:{
+                $split:["$email","@"]
+            }
+        }
+    }
+])
+
+
+
+=> $replaceAll
+
+db.friends.aggregate([
+    {
+        $project:{
+            email:1,
+            change:{
+                $replaceAll:{
+                    input:"$email",
+                    find:"gmail",
+                    replacement:"icloud"
+                }
+            }
+        }
+    }
+])
+
+
+=> $trim , $ltrim , $rtrim
+
+db.friends.aggregate([
+    {
+        $project:{
+            nickname:1,
+            removeSpace:{
+                $trim:{
+                    input:"$nickname",
+                    chars:" "
+                }
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            nickname:1,
+            removeSpace:{
+                $ltrim:{
+                    input:"$nickname",
+                    chars:" "
+                }
+            }
+        }
+    }
+])
+
+
+db.friends.aggregate([
+    {
+        $project:{
+            nickname:1,
+            removeSpace:{
+                $rtrim:{
+                    input:"$nickname",
+                    chars:" "
+                }
+            }
+        }
+    }
+])

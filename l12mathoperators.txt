@@ -1,0 +1,159 @@
+=> Math Operators
+
+$add            {$add:[expr1,expr2,...]}
+$subtract
+$divide
+$multiply
+
+$round          {$round:number}
+$ceil
+$floor
+
+$pow            {$pow:[number,exponent]}
+
+$sqrt           {$sqrt:number}
+$mod            {$mod:[expr1,expr2]}
+$abs            {$abs:number}
+
+
+
+
+db.items.insertMany([
+    {name:"Laptop",price:1000.99,qty:15,discount:0.1,weight:2.5,stock:10,sold:3},
+    {name:"Mouse",price:10.50,qty:100,discount:0.05,weight:0.2,stock:30,sold:10},
+    {name:"Keyboard",price:20.00,qty:50,discount:0.15,weight:0.8,stock:50,sold:20},
+    {name:"Monitor",price:600.99,qty:20,discount:0.2,weight:6.0,stock:100,sold:40},
+    {name:"Headphones",price:100.99,qty:80,discount:0.1,weight:0.4,stock:20,sold:20}
+])
+
+db.programmers.insertMany([
+    {name:"Aung Aung",salary:50000,bonus:5000,tax:0.25,workedHours:40},
+    {name:"Kyaw Kyaw",salary:70000,bonus:7000,tax:0.28,workedHours:30},
+    {name:"Yu Yu",salary:40000,bonus:4000,tax:0.22,workedHours:50},
+    {name:"Ni lar",salary:20000,bonus:2000,tax:0.1,workedHours:20}
+])
+
+
+
+exe 1 (multiply,subtract)
+
+db.programmers.aggregate([
+    {
+        $project:{
+            name:1,
+            salary:1,
+            taxAmount:{
+                $multiply:["$salary","$tax"]
+            },
+            GrandSalary:{
+                $subtract:["$salary",{
+                    $multiply:["$salary","$tax"]
+                }]
+            }
+        }
+    }
+])
+
+
+
+exe 2 (multiply,divide)
+
+db.programmers.aggregate([
+    {
+        $project:{
+            name:1,
+            salary:1,
+            workedHours:1,
+            weeklyHours:{$multiply:["$workedHours",4]}, // Approximate Monthly
+            hourlyRate:{
+                $divide:[
+                    "$salary",
+                    {$multiply:["$workedHours",4]}
+                ]   // Annual salary / Annual hours
+            }
+        }
+    }
+])
+
+
+
+exe 3 (round,ceil,floors)
+
+db.items.aggregate([
+    {
+        $project:{
+            name:1,
+            originalPrice:"$price",
+            roundedPrice:{$round:"$price"},
+            ceilPrice:{$ceil:"$price"},
+            floorPrice:{$floor:"$price"}
+        }
+    }
+])
+
+
+
+exe 4 (pow,sqrt)
+
+db.items.aggregate([
+    {
+        $project:{
+            name:1,
+            weight:1,
+            weightPow:{
+                $pow:["$weight",2]
+            },
+            weightSquare:{
+                $sqrt:"$weight"
+            }
+        }
+    }
+])
+
+
+exe 5 (mod)
+
+db.items.aggregate([
+    {
+        $project:{
+            name:1,
+            qty:1,
+            remindBy20:{
+                $mod:["$qty",20]
+            }
+        }
+    }
+])
+
+
+
+exe 5 (abs)
+
+db.items.aggregate([
+    {
+        $project:{
+            name:1,
+            price:1,
+            diffFrom500:{
+                $abs:{$subtract:["$price",500]}
+            }
+        }
+    }
+])
+
+
+
+exe 6 (add)
+
+db.programmers.aggregate([
+    {
+        $project:{
+            name:1,
+            grandSalary:{
+                $add:["$salary","$bonus"]
+            }
+        }
+    }
+])
+
+-----------------------------------------------

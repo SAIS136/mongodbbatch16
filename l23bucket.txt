@@ -1,0 +1,336 @@
+db.backlinestaffs.insertMany([
+    {_id:1,name:"Aung Aung",dept:"IT",salary:400000,city:"Yangon"},
+    {_id:2,name:"Su Su",dept:"HR",salary:300000,city:"Mandalay"},
+    {_id:3,name:"Zaw Zaw",dept:"IT",salary:700000,city:"Yangon"},
+    {_id:4,name:"Ni Ni",dept:"Finance",salary:200000,city:"Pyinoolwin"},
+    {_id:5,name:"Kyaw Kyaw",dept:"IT",salary:500000,city:"Yangon"}
+])
+
+=> $sortByCount (shorthand to group,count,sort(dec))
+
+db.backlinestaffs.aggregate([
+    {
+        $sortByCount:"$dept"
+    }
+])
+
+db.backlinestaffs.aggregate([
+    {
+        $sortByCount:"$city"
+    }
+])
+
+---------------------------------------------------
+
+=> $bucket
+
+db.collection.aggregate([
+    {
+        $bucket:{
+            groupBy:<expression>,
+            boundaries:[lowerbound1,lowerbound2],    // ***** less to greater
+            output:{}
+        }
+    }
+])
+
+exe 1
+
+db.backlinestaffs.aggregate([
+    {
+        $bucket:{
+            groupBy:"$salary",
+            boundaries:[0,300000,500000,800000],    // ***** less to greater
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"}
+            }
+        }
+    }
+])
+
+
+exe 2
+
+db.backlinestaffs.aggregate([
+    {
+        $bucket:{
+            groupBy:"$salary",
+            boundaries:[0,300000,500000,800000],    // ***** less to greater
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    }
+])
+
+
+--------------------------------
+
+=> $bucketAuto
+
+exe 1
+
+db.backlinestaffs.aggregate([
+    {
+        $bucketAuto:{
+            groupBy:"$salary",
+            buckets:1,
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    }
+])
+
+
+
+exe 2
+
+db.backlinestaffs.aggregate([
+    {
+        $bucketAuto:{
+            groupBy:"$salary",
+            buckets:2,
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    }
+])
+
+--------------------------------
+
+=> $out
+
+exe 1 (write salary buckets to a new collection)
+
+show collections
+
+db.backlinestaffs.aggregate([
+    {
+        $bucket:{
+            groupBy:"$salary",
+            boundaries:[0,300000,500000,800000],    // ***** less to greater
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    },
+    {
+        $out:"frontlinestaffs"
+    }
+])
+
+show collections
+
+db.frontlinestaffs.find()
+
+------
+
+exe 2
+
+db.backlinestaffs.insertMany([
+    {_id:6,name:"Bo Bo",dept:"IT",salary:300000,city:"Yangon"},
+    {_id:7,name:"Yamone",dept:"HR",salary:600000,city:"Mandalay"}
+])
+
+
+db.backlinestaffs.find()
+db.frontlinestaffs.find()
+
+db.backlinestaffs.aggregate([
+    {
+        $bucket:{
+            groupBy:"$salary",
+            boundaries:[0,300000,500000,800000],    // ***** less to greater
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    },
+    {
+        $out:"frontlinestaffs"
+    }
+])
+
+--------------------------------------------------
+
+=> Use MongoDB Views (Read Only , but always current)
+
+show collections
+db.system.views.find()
+
+db.createView("middlelinestaffs_view","backlinestaffs",[
+    {
+        $bucket:{
+            groupBy:"$salary",
+            boundaries:[0,300000,500000,800000],    // ***** less to greater
+            output:{
+                count:{$sum:1},
+                names:{$push:"$name"},
+                avgSalary:{$avg:"$salary"},
+                maxSalary:{$max:"$salary"},
+                minSalary:{$min:"$salary"}
+            }
+        }
+    }
+])
+
+
+show collections
+db.system.views.find()
+db.middlelinestaffs_view.find()
+
+
+exe 3
+
+db.backlinestaffs.insertMany([
+    {_id:8,name:"Nyi Nyi",dept:"IT",salary:250000,city:"Yangon"},
+    {_id:9,name:"Ko Ko",dept:"IT",salary:200000,city:"Mandalay"}
+])
+
+db.backlinestaffs.find()
+db.middlelinestaffs_view.find()
+
+
+=> DROP
+db.middlelinestaffs.drop()
+
+----------------------------------------------------
+
+=> $facet - Multiple Analytics in one query
+
+db.collection.aggregate([
+    {
+        $facet:{
+            <outputField1>:[<pipeline1>],
+            <outputField2>:[<pipeline2>],
+            ....
+        }
+    }
+])
+
+
+=> exe 1
+
+db.backlinestaffs.aggregate([
+    {
+        $facet:{
+            salaryBuckets:[
+                {
+                    $bucketAuto:{
+                    groupBy:"$salary",
+                    buckets:3,
+                    output:{
+                        count:{$sum:1}
+                    }
+                }
+                }
+            ],
+            topDepts:[
+                {
+                    $sortByCount:"$dept"
+                }
+            ],
+            cityGroup:[
+                {
+                    $sortByCount:"$city"
+                }
+            ],
+            cities:[
+                {$group:{_id:"$city"}},
+                {
+                    $project:{
+                        _id:0,
+                        city:"$_id"
+                    }
+                }
+            ]
+        }
+    }
+])
+
+
+exe 2
+
+db.backlinestaffs.aggregate([
+    {
+        $facet:{
+            "salaryAnalysis":[
+                {
+                    $bucket:{
+                        groupBy:"$salary",
+                        boundaries:[0,300000,500000,800000],
+                        output:{
+                            count:{$sum:1},
+                            avgSalary:{$avg:"$salary"},
+                            employees:{$push:"$name"}
+                        }
+                    }
+                }
+            ],
+            "deptStats":[
+                {
+                    $group:{
+                        _id:"$dept",
+                        totalEmployees:{$sum:1},
+                        avgSalary:{$avg:"$salary"},
+                        minSalary:{$min:"$salary"},
+                        maxSalary:{$max:"$salary"}                    }
+                },
+                {$sort:{avgSalary:-1}}
+            ],
+            "cityDistribution":[
+                {
+                    $group:{
+                        _id:"$city",
+                        count:{$sum:1},
+                        totalSalary:{$sum:"$salary"}
+                    }
+                }
+            ],
+            "topEarners":[
+                {
+                    $project:{
+                        name:1,
+                        dept:1,
+                        salary:1,
+                        city:1
+                    }
+                },
+                {
+                    $sort:{
+                        salary:-1
+                    }
+                },
+                {
+                    $limit:2
+                }
+            ]
+        }
+    }
+])
+
+-------------------------------------------------------
+

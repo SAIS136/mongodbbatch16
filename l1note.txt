@@ -1,0 +1,166 @@
+=> SQL Database (Structured Query Language Database) ?
+structure format
+    tables (columns , rows)
+    SELECT , INSERT , UPDATE , DELETE
+    for = Bank System , ERP , CRM
+
+    SQL Database
+        Mysql
+        PostgreSQL
+        Microsoft SQL Server
+        Oracle Database
+
+=> NoSQL Database ?
+    unstructured
+    key-value , document , graph ... format
+    Real-time apps, Streaming apps
+
+    NoSQL Database
+        MongoDB
+        Redis
+        Noe4j
+
+-----------------------------------------------------
+
+=> MongoDB is NoSQL Database
+
+official website
+https://www.mongodb.com/
+
+=> Download App
+
+    => Windows (Driver,compass)
+
+        Method 1
+
+        Resources > Documentation > Welcome to the MongoDB Docs > right pannel and scoll down > Deployment Options >
+        community edition > MongoDB Community Server Download > Community Server > select package
+        Version : 9.0.2 (current)
+        Platform : Windows X64
+        Package : msi
+
+        Click -> Download
+
+
+        Method 2
+
+        Product >  Try Community Edition > Download > Community Server > select package
+        Version : 9.0.2 (current)
+        Platform : Windows X64
+        Package : msi
+
+        Click -> Download
+
+        => Download MongoDB Shell
+
+        Product >  Try Community Edition > Download > Tools > MongoDB Shell Download
+        Version : 2.13.0 (current)
+        Platform : Windows X64 (10+)
+        Package : zip
+
+        Click -> Download
+
+    => Linux (Ubuntu)
+
+        Product >  Try Community Edition > Download > Community Server > select package
+        Version : 9.0.2 (current)
+        Platform : Ubuntu your Ubuntu version x64
+        Package : server
+
+        Click -> Download
+
+        Ubuntu 24.04 x64 Ubuntu for x64 (Intel/AMD 64-bit CPUs)
+        Ubuntu 24.04 ARM x64 Ubuntu for arm x64 (Raspberry PI, Apple M1,M2)
+
+        ARM
+        Advance RISC(Reduce Instruction Set Computer)
+
+        => Download MongoDB Shell
+
+        Product >  Try Community Edition > Download > Tools > MongoDB Shell Download
+        Version : 2.13.0 (current)
+        Platform : Debian (10+) / Ubuntu (18.04+) x64
+        Package : deb
+
+        Click -> Download
+
+        => Download MongoDB Compass (GUI)
+
+        Product >  Try Community Edition > Download > Tools > MongoDB Compass Download (GUI)
+        Version : 1.52.0 (current)
+        Platform : Ubuntu 64-bit (20.04+)
+        Package : deb
+
+        Click -> Download
+
+    => MacOS
+
+        Product >  Try Community Edition > Download > Community Server > select package
+        Version : 9.0.2 (current)
+        Platform : macOS x64
+        Package : tgz
+
+        Click -> Download
+
+        macOS 24.04 x64 macOS for x64 Intel based Macs
+        macOS 24.04 ARM x64 macOS for Apple Silicon Chip ( Apple M1,M2,M3,M4 )
+
+------------------------------------------------------------------------------
+
+=> Install plugin into VScode
+
+    File menu > Preferences > Extension
+    search as mongodb > "MongoDB for VScode" install
+    Advanced Connection Settings > "Open Form" > Save and connect
+
+    => Open Shell in VScode terminal
+    right click on "localhost:27017" > Launch MongoDB Shell
+
+
+-------------------------------------------------------------
+
+=> MongoDB Atlas
+
+    DATABASE > Clusters > Connect > Compass
+    mongodb+srv://user1:<db_password>@crm.gwe5gyr.mongodb.net/
+
+=> Create User Account
+    SECURITY > Database and Network Access > Database Access > Database Users
+    Add New Database User
+    Username = user2
+    Password = 123456789aaa
+
+=> Allow Your IP Address
+    SECURITY > Database and Network Access > Network Access >
+    IP Access List
+    Add IP Address
+    Add Current IP Address (or) Allow Access from anywhere (0.0.0.0/0)
+    click Confirm Button
+
+    => MongoDB Compass (your local computer app)
+    Open MongoDB Compass
+
+    Add New Connection
+    mongodb+srv://user2:123456789aaa@crm.gwe5gyr.mongodb.net/
+    Save and connect
+
+-------------------------------------------------------------
+
+=> MongoDB Atlas (by shell)
+
+    DATABASE > Clusters > Connect > Shell
+    mongosh "mongodb+srv://crm.gwe5gyr.mongodb.net/" --apiVersion 1 --username <db_username>
+
+    => Method 1
+    => Open Local Terminal
+    mongosh --version       ()
+    mongosh "mongodb+srv://crm.gwe5gyr.mongodb.net/" --apiVersion 1 --username user2
+    123456789aaa
+
+    => Method 2
+    mongodb+srv://user2:123456789aaa@crm.gwe5gyr.mongodb.net/
+
+    show databases or show dbs
+
+
+
